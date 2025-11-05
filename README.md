@@ -124,7 +124,7 @@ Participants can **remix** the Repl, add their own OpenAI keys, and immediately 
 ## Author
 
 Developed for the **FutureUS / Moral Alignment Workshop**  
-by [Sema Koc], [Mortality Lab], [Boston College]
+by Sema Koc, Mortality Lab, Boston College
 
 ---
 
