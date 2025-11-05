@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Moral Dilemma Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+    }
+
+    #chat-box {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      background: #f9f9f9;
+      margin-bottom: 1rem;
+      white-space: pre-wrap;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .message {
+      margin-bottom: 1rem;
+    }
+
+    .user {
+      color: #1a73e8;
+      font-weight: bold;
+    }
+
+    .bot {
+      color: #34a853;
+      font-weight: bold;
+    }
+
+    #input-box {
+      width: 80%;
+      padding: 10px;
+      font-size: 14px;
+      height: 80px;
+      font-family: inherit;
+    }
+
+    #send-button {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    #send-button:hover {
+      background-color: #1669c1;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Moral Dilemma Chat</h1>
+
+  <div id="chat-box"></div>
+
+  <textarea id="input-box" placeholder="Type your message here... (Shift+Enter for new line)"></textarea>
+  <button id="send-button">Send</button>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const dilemma = urlParams.get("dilemma") || "a difficult moral decision";
+    const participant_id = urlParams.get("participant_id") || "anonymous";
+    const response_id = urlParams.get("response_id") || "none";
+
+    const chatBox = document.getElementById("chat-box");
+    const inputBox = document.getElementById("input-box");
+    const sendButton = document.getElementById("send-button");
+
+    function addMessage(sender, text) {
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("message");
+      const className = sender.toLowerCase() === "you" ? "user" : "bot";
+      messageDiv.innerHTML = `<span class="${className}">${sender}:</span> ${text}`;
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendMessage(message) {
+      if (!message.trim()) return;
+      addMessage("You", message);
+      inputBox.value = "";
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message,
+            participant_id,
+            response_id,
+            dilemma
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        addMessage("Moral Dilemma Assistant", data.response);
+      } catch (error) {
+        addMessage("System", `Error: Unable to get response. ${error.message}`);
+        console.error("Chat error:", error);
+      }
+    }
+
+    sendButton.addEventListener("click", () => sendMessage(inputBox.value));
+
+    inputBox.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage(inputBox.value);
+      }
+    });
+
+    // Auto-start conversation
+    window.addEventListener("load", async () => {
+      // Check if conversation already started recently (within 2 seconds)
+      const lastStart = sessionStorage.getItem('conversation_started');
+      const now = Date.now();
+
+      if (lastStart && (now - parseInt(lastStart)) < 2000) {
+        console.log('Conversation already started, skipping duplicate');
+        return;
+      }
+
+      sessionStorage.setItem('conversation_started', now.toString());
+      
+      const firstUserMessage = `Help me decide what I should do. ${dilemma}`;
+      addMessage("You", firstUserMessage);
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: firstUserMessage,
+            response_id,
+            dilemma
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        addMessage("Moral Dilemma Assistant", data.response);
+      } catch (error) {
+        addMessage("System", `Error: Unable to start conversation. ${error.message}`);
+        console.error("Initial chat error:", error);
+      }
+    });
+  </script>
+</body>
+</html>

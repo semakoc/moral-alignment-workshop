@@ -1,0 +1,26 @@
+entrypoint = "chatbot.py"
+modules = ["python-3.11"]
+
+[nix]
+channel = "stable-25_05"
+
+[unitTest]
+language = "python3"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
+
+[deployment]
+run = ["python3", "chatbot.py"]
+deploymentTarget = "cloudrun"
+
+[agent]
+expertMode = true
+
+[[ports]]
+localPort = 80
+externalPort = 80
+
+[[ports]]
+localPort = 5000
+externalPort = 5000
