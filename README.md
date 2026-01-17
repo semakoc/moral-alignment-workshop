@@ -107,7 +107,6 @@ The chatbot reads the following parameters from the URL:
 
 ### Section 5: Logs, Troubleshooting, and Attribution
 
-```markdown
 ## 📊 Viewing and Downloading Logs
 
 No database setup is required. All conversations are automatically appended to `chatlog.csv` inside the file tree.
