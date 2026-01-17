@@ -4,7 +4,7 @@
 
 This repository contains a lightweight, fully self‑contained web chatbot designed to support moral reflection in research, classroom, and workshop settings. It uses OpenAI’s `gpt-4o-mini` model for conversational reasoning and logs all interactions locally to a CSV file for later analysis.
 
-## 🎯 What This Project Is For
+### 🎯 What This Project Is For
 
 The design prioritizes clarity, transparency, and ease of replication over scalability. It is well suited for:
 
@@ -16,7 +16,7 @@ The design prioritizes clarity, transparency, and ease of replication over scala
 
 ---
 ## Section 1: Structure, Tech Stack, Deployment
-## 📂 Project Structure
+### 📂 Project Structure
 
 ```text
 .
@@ -28,7 +28,7 @@ The design prioritizes clarity, transparency, and ease of replication over scala
 ├── pyproject.toml    # (Optional) Poetry/UV config
 └── uv.lock           # (Optional) Lock file
 ```
-## 🛠 Tech Stack
+### 🛠 Tech Stack
 
 | Component | Technology |
 | :--- | :--- |
@@ -39,7 +39,7 @@ The design prioritizes clarity, transparency, and ease of replication over scala
 | **Hosting** | Replit (Free tier supported) |
 
 
-## 🚀 Running the Project on Replit
+### 🚀 Running the Project on Replit
 
 This project is designed to work out of the box on Replit.
 
@@ -57,7 +57,7 @@ Use the working replication directly. Click "Remix" to create your own editable 
     * `.replit`
 
 ## Section 2: Environmental Variables
-## 🔑 Environment Variables (Required)
+### 🔑 Environment Variables (Required)
 
 Replit does not use `.env` files. Secrets must be added through the Replit interface.
 
@@ -73,7 +73,7 @@ Replit does not use `.env` files. Secrets must be added through the Replit inter
 > **Security Note:** These values are injected securely at runtime and are never exposed in the code or committed to GitHub.
 
 ## Section 3: Embedding in Qualtrics
-## 🧩 Embedding in Qualtrics
+### 🧩 Embedding in Qualtrics
 
 The chatbot can be embedded directly inside a Qualtrics survey using an `iframe`. It accepts dynamic URL parameters to link survey data to chat logs.
 
@@ -91,7 +91,7 @@ The chatbot reads the following parameters from the URL:
 
 ```html
 <iframe
-  src="[https://your-project-name.username.repl.co/?participant_id=$](https://your-project-name.username.repl.co/?participant_id=$){e://Field/participant_id}&response_id=${e://Field/ResponseID}&dilemma=${q://QID116/ChoiceGroup/SelectedChoices}"
+  src="https://your-project-name.username.repl.co/?participant_id=$(https://your-project-name.username.repl.co/?participant_id=$){e://Field/participant_id}&response_id=${e://Field/ResponseID}&dilemma=${q://QID116/ChoiceGroup/SelectedChoices}"
   width="100%"
   height="700"
   style="border:1px solid #ccc; border-radius:8px;">
@@ -104,9 +104,9 @@ The chatbot reads the following parameters from the URL:
 
 ***
 
-### Section 4: Logs, Troubleshooting, and Attribution
+## Section 4: Logs, Troubleshooting, and Attribution
 
-## 📊 Viewing and Downloading Logs
+### 📊Viewing and Downloading Logs
 
 No database setup is required. All conversations are automatically appended to `chatlog.csv` inside the file tree.
 
@@ -119,23 +119,16 @@ No database setup is required. All conversations are automatically appended to `
 
 ---
 
-## ⚠️ Troubleshooting
+### ⚠️Troubleshooting
 If clicking **Run** does nothing or the app fails to start, check the following:
-
-### 1. Run button does nothing / Exits immediately
 Check your `.replit` file. It must contain this exact line:
 ```toml
 run = "python3 chatbot.py"
 ```
-## 📝 Author and Attribution
+### 📝Author and Attribution
 
-**Developed for the FutureUS / Moral Alignment Workshop**
-
-* **Sema Koc**
-* Morality Lab
-* Boston College
-
----
+* Developed for the FutureUS / Moral Alignment Workshop
+* Sema Koc, Morality Lab, Boston College
 
 ### License
 This project is intended for research and educational use.
