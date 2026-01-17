@@ -17,8 +17,6 @@ The design prioritizes clarity, transparency, and ease of replication over scala
 ---
 
 ## 📂 Project Structure
-
-```text
 .
 ├── chatbot.py        # Flask backend + OpenAI calls
 ├── chat.html         # Frontend chat interface
