@@ -32,7 +32,6 @@ The design prioritizes clarity, transparency, and ease of replication over scala
 
 ### Section 2: Tech Stack and Setup Options
 
-```markdown
 ## 🛠 Tech Stack
 
 | Component | Technology |
@@ -43,7 +42,6 @@ The design prioritizes clarity, transparency, and ease of replication over scala
 | **Storage** | Local CSV logging (inside Replit) |
 | **Hosting** | Replit (Free tier supported) |
 
----
 
 ## 🚀 Running the Project on Replit
 
