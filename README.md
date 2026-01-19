@@ -8,13 +8,16 @@ This repository contains a lightweight, fully self‑contained web chatbot desig
 
 This GitHub repository was created to accompany the professional development session Building Free-Form Data Pipelines for Human-AI Conversations in Surveys, delivered at the SPSP 2026 Annual Convention in Chicago, IL. The project supports the workshop by providing a concrete, runnable example of how free-form human–AI conversations can be embedded in surveys and logged through a flexible data pipeline.
 
+**You do not need prior programming experience to follow the workshop or run the demo version of this project.
+**
 The implementation uses a moral reasoning chatbot drawn from Moral Reasoning with AI Chatbots in Naturalistic Conversation: Choices, Perceptions, and Value Alignment as a demonstration case. The moral reasoning task is included to make the data pipeline concrete and interpretable, rather than to present substantive research findings.
 
-This Replit-based version is designed for education, demonstration, and rapid prototyping. While Replit offers an accessible environment for workshops and teaching, it is not recommended for formal research data collection involving sensitive participant information. For production research deployments, we advise using AWS or other secure cloud servers that provide stronger data security, access controls, and compliance support.
+This Replit-based version is designed for education, demonstration, and rapid prototyping. **While Replit offers an accessible environment for workshops and teaching, it is not recommended for formal research data collection involving sensitive participant information.** For production research deployments, we advise using AWS or other secure cloud servers that provide stronger data security, access controls, and compliance support.
 
 ---
 ## Section 1: Structure, Tech Stack, Deployment
 ### 📂 Project Structure
+**Most users only need to interact with backend.py and frontend.html. The other files support setup and logging.**
 
 Project files:
 
