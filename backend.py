@@ -1,92 +1,128 @@
-<!-- === MORAL DILEMMA CHATBOT UI (REPLIT VERSION) === -->
-<!-- This version removes AWS-specific URLs and uses relative routes for Replit hosting -->
+# === MORAL DILEMMA CHATBOT (REPLIT VERSION) ===
+# This version has been modified from the AWS deployment
+# (which used EC2, S3, and Cloudflare Tunnels)
+# to run entirely inside Replit using local CSV logging.
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Moral Dilemma Chat</title>
-  <style>
-    /* CHANGED: Simplified CSS for Replit’s Preview tab display */
-    body { font-family: Arial, sans-serif; margin: 2rem; }
-    #chat-box { border: 1px solid #ccc; padding: 1rem; background: #f9f9f9; margin-bottom: 1rem; white-space: pre-wrap; max-height: 500px; overflow-y: auto; }
-    .message { margin-bottom: 1rem; }
-    .user { color: #1a73e8; font-weight: bold; }
-    .bot { color: #34a853; font-weight: bold; }
-    #input-box { width: 80%; padding: 10px; font-size: 14px; height: 80px; font-family: inherit; }
-    #send-button { padding: 12px 24px; font-size: 16px; font-weight: bold; background-color: #1a73e8; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 10px; }
-    #send-button:hover { background-color: #1669c1; }
-  </style>
-</head>
+from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS
+from openai import OpenAI
+import datetime, os, time, csv, json
 
-<body>
-  <h1>Moral Dilemma Chat</h1>
-  <div id="chat-box"></div>
-  <textarea id="input-box" placeholder="Type your message here... (Shift+Enter for new line)"></textarea>
-  <button id="send-button">Send</button>
+# --- Flask setup (unchanged structure) ---
+app = Flask(__name__)
+CORS(app)
 
-  <script>
-    // CHANGED: Replit version reads parameters from the Qualtrics iframe URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const dilemma = urlParams.get("dilemma") || "a difficult moral decision";
-    const participant_id = urlParams.get("participant_id") || "anonymous";
-    const response_id = urlParams.get("response_id") || "none";
+# --- MODEL & SESSION CONFIG ---
+# Replit-friendly environment variable call (was hardcoded or pulled from AWS env vars)
+MODEL_NAME = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+SESSION_TIMEOUT_SECONDS = 15 * 60
+all_sessions = {}
 
-    const chatBox = document.getElementById("chat-box");
-    const inputBox = document.getElementById("input-box");
-    const sendButton = document.getElementById("send-button");
+# --- OpenAI client ---
+# CHANGED: reads key from Replit Secrets instead of EC2 environment or local file
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-    function addMessage(sender, text) {
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add("message");
-      const className = sender.toLowerCase() === "you" ? "user" : "bot";
-      messageDiv.innerHTML = `<span class="${className}">${sender}:</span> ${text}`;
-      chatBox.appendChild(messageDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
+
+def trim_history(messages, max_exchanges=10):
+    """Keep only recent conversation turns."""
+    if not messages:
+        return []
+    system_msg = messages[0]
+    convo = messages[1:]
+    if len(convo) > 2 * max_exchanges:
+        convo = convo[-2 * max_exchanges:]
+    return [system_msg] + convo
+
+
+@app.route("/")
+def serve_ui():
+    # CHANGED: simple static file serve (no AWS S3 hosting)
+    return send_file("frontend.html")
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.json or {}
+    user_input = (data.get("message") or "").strip()
+    response_id = data.get("response_id", "none")
+    participant_id = data.get("participant_id", "anonymous")
+    dilemma = data.get("dilemma", "unknown")
+
+    print(f"{response_id}: {user_input} (Dilemma: {dilemma})")
+
+    session_key = (participant_id, response_id)
+    now = time.time()
+
+    # CHANGED: removed S3/session handling logic from AWS
+    # Replit keeps everything in memory during runtime
+    if (session_key not in all_sessions
+            or now - all_sessions[session_key]["last_active"]
+            > SESSION_TIMEOUT_SECONDS):
+        system_prompt = (
+            "You are a nonjudgmental assistant helping the user reflect on this moral dilemma. "
+            "Keep replies short (3–5 sentences), and end with a gentle reflective question."
+        )
+        messages = [{"role": "system", "content": system_prompt}]
+        all_sessions[session_key] = {"messages": messages, "last_active": now}
+
+    messages = all_sessions[session_key]["messages"]
+
+    # CHANGED: simple reset command for starting conversation
+    if user_input.upper() == "START_CONVERSATION":
+        user_input = f"Help me decide what I should do. {dilemma}"
+
+    # GPT response logic (unchanged)
+    messages.append({"role": "user", "content": user_input})
+    messages = trim_history(messages)
+    bot_reply = "[Error: no response]"
+
+    try:
+        resp = client.chat.completions.create(model=MODEL_NAME,
+                                              messages=messages)
+        bot_reply = resp.choices[0].message.content.strip()
+        messages.append({"role": "assistant", "content": bot_reply})
+    except Exception as e:
+        bot_reply = f"Error generating response: {e}"
+
+    all_sessions[session_key]["messages"] = messages
+    all_sessions[session_key]["last_active"] = now
+
+    # --- LOGGING ---
+    # CHANGED: replaced AWS S3 upload with local CSV logging for Replit
+    record = {
+        "timestamp": datetime.datetime.now().isoformat(),
+        "model": MODEL_NAME,
+        "participant_id": participant_id,
+        "response_id": response_id,
+        "dilemma": dilemma,
+        "user_input": user_input,
+        "bot_reply": bot_reply,
     }
 
-    async function sendMessage(message) {
-      if (!message.trim()) return;
-      addMessage("You", message);
-      inputBox.value = "";
+    csv_filename = "chatlog.csv"
+    file_exists = os.path.isfile(csv_filename)
 
-      // CHANGED: now uses relative /chat endpoint instead of AWS endpoint
-      const response = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, participant_id, response_id, dilemma })
-      });
+    with open(csv_filename, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "timestamp",
+                "model",
+                "participant_id",
+                "response_id",
+                "dilemma",
+                "user_input",
+                "bot_reply",
+            ],
+        )
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(record)
 
-      const data = await response.json();
-      addMessage("Moral Dilemma Assistant", data.response);
-    }
+    # CHANGED: removed S3 write confirmation printout
+    return jsonify({"response": bot_reply})
 
-    sendButton.addEventListener("click", () => sendMessage(inputBox.value));
-    inputBox.addEventListener("keypress", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage(inputBox.value);
-      }
-    });
 
-    // CHANGED: Auto-starts conversation when embedded in Qualtrics
-    window.addEventListener("load", async () => {
-      const firstUserMessage = `Help me decide what I should do. ${dilemma}`;
-      addMessage("You", firstUserMessage);
-
-      const response = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: firstUserMessage,
-          participant_id,
-          response_id,
-          dilemma
-        })
-      });
-      const data = await response.json();
-      addMessage("Moral Dilemma Assistant", data.response);
-    });
-  </script>
-</body>
-</html>
+if __name__ == "__main__":
+    # CHANGED: runs on port 5000 (required for Replit)
+    app.run(host="0.0.0.0", port=5000)
