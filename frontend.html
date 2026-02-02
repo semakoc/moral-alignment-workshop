@@ -1,11 +1,11 @@
-<!-- === MORAL DILEMMA CHATBOT UI (REPLIT VERSION) === -->
+<!-- === Free-Form Data Pipeline for Human-AI Conversations in Surveys (REPLIT VERSION) === -->
 <!-- This version removes AWS-specific URLs and uses relative routes for Replit hosting -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Moral Dilemma Chat</title>
+  <title>Chat</title>
   <style>
     /* CHANGED: Simplified CSS for Replit’s Preview tab display */
     body { font-family: Arial, sans-serif; margin: 2rem; }
@@ -20,7 +20,7 @@
 </head>
 
 <body>
-  <h1>Moral Dilemma Chat</h1>
+  <h1>Chat</h1>
   <div id="chat-box"></div>
   <textarea id="input-box" placeholder="Type your message here... (Shift+Enter for new line)"></textarea>
   <button id="send-button">Send</button>
@@ -28,7 +28,7 @@
   <script>
     // CHANGED: Replit version reads parameters from the Qualtrics iframe URL
     const urlParams = new URLSearchParams(window.location.search);
-    const dilemma = urlParams.get("dilemma") || "a difficult moral decision";
+    const stimuli = urlParams.get("stimuli") || "default stimuli";
     const participant_id = urlParams.get("participant_id") || "anonymous";
     const response_id = urlParams.get("response_id") || "none";
 
@@ -54,11 +54,11 @@
       const response = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, participant_id, response_id, dilemma })
+        body: JSON.stringify({ message, participant_id, response_id, stimuli })
       });
 
       const data = await response.json();
-      addMessage("Moral Dilemma Assistant", data.response);
+      addMessage("Assistant", data.response);
     }
 
     sendButton.addEventListener("click", () => sendMessage(inputBox.value));
@@ -71,7 +71,7 @@
 
     // CHANGED: Auto-starts conversation when embedded in Qualtrics
     window.addEventListener("load", async () => {
-      const firstUserMessage = `Help me decide what I should do. ${dilemma}`;
+      const firstUserMessage = `Help me decide what I should do. ${stimuli}`;
       addMessage("You", firstUserMessage);
 
       const response = await fetch("/chat", {
@@ -81,11 +81,11 @@
           message: firstUserMessage,
           participant_id,
           response_id,
-          dilemma
+          stimuli
         })
       });
       const data = await response.json();
-      addMessage("Moral Dilemma Assistant", data.response);
+      addMessage("Assistant", data.response);
     });
   </script>
 </body>
