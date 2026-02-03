@@ -113,26 +113,39 @@ def chat():
     }
 
     csv_filename = "chatlog.csv"
+    fieldnames = [
+        "timestamp",
+        "model",
+        "participant_id",
+        "response_id",
+        "stimuli",
+        "system_prompt",
+        "user_input",
+        "bot_reply",
+    ]
+    header_line = ",".join(fieldnames)
     file_exists = os.path.isfile(csv_filename)
-    file_empty = not file_exists or os.path.getsize(csv_filename) == 0
+    file_empty = not file_exists or (os.path.getsize(csv_filename) == 0)
+    needs_header = file_empty
+    if file_exists and not file_empty:
+        with open(csv_filename, "r", newline="", encoding="utf-8") as f:
+            first_line = (f.readline() or "").strip()
+        needs_header = not first_line.startswith("timestamp,")
 
-    with open(csv_filename, "a", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(
-            f,
-            fieldnames=[
-                "timestamp",
-                "model",
-                "participant_id",
-                "response_id",
-                "stimuli",
-                "system_prompt",
-                "user_input",
-                "bot_reply",
-            ],
-        )
-        if file_empty:
-            writer.writeheader()
-        writer.writerow(record)
+    if needs_header and file_exists and not file_empty:
+        with open(csv_filename, "r", newline="", encoding="utf-8") as f:
+            existing = f.read()
+        with open(csv_filename, "w", newline="", encoding="utf-8") as f:
+            f.write(header_line + "\n")
+            f.write(existing)
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writerow(record)
+    else:
+        with open(csv_filename, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            if needs_header:
+                writer.writeheader()
+            writer.writerow(record)
 
     # CHANGED: removed S3 write confirmation printout
     return jsonify({"response": bot_reply})
