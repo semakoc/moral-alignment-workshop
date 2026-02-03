@@ -103,6 +103,7 @@ def chat():
 
     csv_filename = "chatlog.csv"
     file_exists = os.path.isfile(csv_filename)
+    file_empty = not file_exists or os.path.getsize(csv_filename) == 0
 
     with open(csv_filename, "a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
@@ -118,7 +119,7 @@ def chat():
                 "bot_reply",
             ],
         )
-        if not file_exists:
+        if file_empty:
             writer.writeheader()
         writer.writerow(record)
 
