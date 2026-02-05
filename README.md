@@ -55,10 +55,10 @@ Survey metadata, including `participant_id` and `response_id`, were recorded as 
 - Used where: Uploaded to Replit.
 - Notes: This file specifies which Python file to run.
 
-  `Example_Survey.qsf`
-  - What it does: Example Quatrics file can be imported directly
-  - Used where: illustration on the final product
-  - Notes: The webapp connection to the datapipeline may be down at the time you see it 
+`Example_Survey.qsf`
+- What it does: Example Quatrics file can be imported directly
+- Used where: illustration on the final product
+- Notes: The webapp connection to the datapipeline may be down at the time you see it 
 
 ### 🛠 Tech Stack
 
