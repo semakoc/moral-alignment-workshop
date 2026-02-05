@@ -77,7 +77,7 @@ This project is designed to work out of the box on Replit.
 
 ### Option 1: Remix the Existing Repl (Recommended)
 Use the working replication directly. Click "Remix" to create your own editable copy:
-👉 **[Click here to Remix]<a href="https://replit.com/@zhenh1/Free-Form-Data-Pipeline-for-Human-AI-Conversations-in-Survey" target="_blank">Link Text</a>**
+👉 **<a href="https://replit.com/@zhenh1/Free-Form-Data-Pipeline-for-Human-AI-Conversations-in-Survey" target="_blank">[Click here to Remix]</a>**
 
 ### Option 2: Manual Setup
 1. Create a free account at [Replit.com](https://replit.com).
