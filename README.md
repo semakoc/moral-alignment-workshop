@@ -7,9 +7,9 @@ This repository contains a lightweight, fully self‑contained web chatbot pipel
 ---
 
 ## 📚 Workshop Steps
-<a href="https://github.com/semakoc/Free-Form-Chatbot-Pipleline-For-Surveys/wiki/2.-Web-App-Deployment" target="_blank">Section 1: Deploying the Web App on Replit</a> \
-<a href="https://github.com/semakoc/Free-Form-Chatbot-Pipleline-For-Surveys/wiki/3.-Environmental-Variables" target="_blank">Section 2: Environmental Variables</a> \
-<a href="https://github.com/semakoc/Free-Form-Chatbot-Pipleline-For-Surveys/wiki/4.-Embedding-in-Qualtrics" target="_blank">Section 3: Embedding in Qualtrics</a> \
+<a href="https://github.com/semakoc/Free-Form-Chatbot-Pipleline-For-Surveys/wiki/2.-Web-App-Deployment" target="_blank">STEP 1: Deploying the Web App on Replit</a> \
+<a href="https://github.com/semakoc/Free-Form-Chatbot-Pipleline-For-Surveys/wiki/3.-Environmental-Variables" target="_blank">STEP 2: Setting Environmental Variables</a> \
+<a href="https://github.com/semakoc/Free-Form-Chatbot-Pipleline-For-Surveys/wiki/4.-Embedding-in-Qualtrics" target="_blank">STEP 3: Embedding in Qualtrics</a> 
 
 ### Additional Information
 <a href="https://github.com/semakoc/Free-Form-Chatbot-Pipleline-For-Surveys/wiki/Project-Structure" target="_blank">Project Structure</a> \
