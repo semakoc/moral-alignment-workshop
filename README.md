@@ -1,8 +1,5 @@
 # Free-Form Data Pipeline for Human-AI Conversations in Surveys (Replit Version)
-
-> **Note:** This version is specifically adapted to run on **Replit**, removing all AWS, Cloudflare tunnel, and database dependencies in favor of a simple, reproducible setup.
-
-This repository contains a lightweight, fully self‑contained web chatbot pipeline designed to support natrualistic human-AI conversation research. It uses OpenAI’s `gpt-4o-mini` model for conversation and logs all interactions locally to a CSV file for later analysis.
+This repository contains a lightweight, fully self‑contained web chatbot pipeline designed to support natrualistic human-AI conversation research. It accesses OpenAI’s `gpt-4o-mini` model for conversation and logs all interactions to a CSV file for later analysis.
 
 ---
 
